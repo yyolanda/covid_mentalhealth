@@ -13,7 +13,6 @@ library(dplyr)
 library(data.table)
 library(DT)
 library(ggplot2)
-library(plotly)
 library(tidyr)
 library(naniar)
 library(caret)
@@ -143,6 +142,19 @@ function(input, output, clientData, session){
     plot(enet()$elasticOut_a)
   })
   
+  output$tuneDat_a = renderDT({
+    datatable(data.frame(alpha=enet()$elasticOut_a$bestTune$alpha,
+                         lambda=enet()$elasticOut_a$bestTune$lambda), 
+              escape = FALSE,
+              style = "bootstrap",
+              rownames=F,
+              options = list(dom = 't',
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+                               "}")))
+  })
+  
   output$featurePlot_d=renderPlot({
     # refit the model with best-performing parameters
     glmnetOut  = glmnet(x = enet()$Xtrain, y = enet()$Ytrain_d, alpha = enet()$elasticOut_d$bestTune$alpha)
@@ -219,4 +231,19 @@ function(input, output, clientData, session){
     
   })
   
+  output$dict = renderDT({
+    w=as.numeric(input$wave)
+    dat=fread('dictionary.csv')
+    if(w==1){w='^1,'}
+    
+    datatable(dat %>% filter(grepl(w,waves)), 
+              escape = FALSE,
+              style = "bootstrap",
+              rownames=F,
+              options = list(dom = 't',
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+                               "}")))
+  })
 }
