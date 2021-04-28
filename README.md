@@ -1,2 +1,3 @@
 # covid_mentalhealth
-STAT656 Project
+STAT 656 Project
+Shiny App: https://pettyprettykitty.shinyapps.io/covid_mentalhealth/
